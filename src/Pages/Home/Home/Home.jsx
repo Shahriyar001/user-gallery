@@ -1,10 +1,13 @@
 const Home = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const name = event.target.name.value;
-    const social = event.target.social.value;
-    const file = event.target.file.value;
-    console.log(name, social, file);
+    const data = {
+      name: event.target.name.value,
+      social: event.target.social.value,
+      file: event.target.file.value,
+    };
+
+    console.log(data);
   };
 
   return (
