@@ -14,41 +14,37 @@ const Navbar = () => {
     <div className="navbar bg-base-100">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-xl">
-          daisyUI
+          Users Gallery
         </Link>
       </div>
       <div className="flex-none">
         <ul className="menu menu-horizontal px-1">
-          <li>
-            <Link to="/dashboard">Dashboard</Link>
-          </li>
+          {user?.uid && (
+            <li>
+              <Link to="/dashboard">Dashboard</Link>
+            </li>
+          )}
+
           {user?.uid ? (
             <>
               <li>
-                <button onClick={handleLogOut}>Logout</button>
+                <button
+                  className="btn btn-accent text-white"
+                  onClick={handleLogOut}
+                >
+                  Logout
+                </button>
               </li>
             </>
           ) : (
             <>
               <li>
-                <Link to="/login">Login</Link>
+                <Link to="/login" className="btn btn-primary text-white">
+                  Login
+                </Link>
               </li>
             </>
           )}
-
-          <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="bg-base-100 rounded-t-none p-2">
-                <li>
-                  <a>Link 1</a>
-                </li>
-                <li>
-                  <a>Link 2</a>
-                </li>
-              </ul>
-            </details>
-          </li>
         </ul>
       </div>
     </div>

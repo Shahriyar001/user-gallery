@@ -5,61 +5,68 @@ const UsersData = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/users")
+    fetch("https://gallery-server-nu.vercel.app/users")
       .then((res) => res.json())
       .then((data) => {
         setUsers(data);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setLoading(false);
       });
   }, []);
-  console.log(users);
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div>
-      <div></div>
-      <div className="w-8/10  m-12">
-        <div className="overflow-x-auto">
-          <table className="table">
-            {/* head */}
-            <thead>
-              <tr>
-                <th className="text-xl font-bold">Pic</th>
-                <th className="text-xl font-bold">Name</th>
-                <th className="text-xl font-bold">Social handler</th>
+      <h2>User Submissions</h2>
+      <div className="overflow-x-auto">
+        <table className="table">
+          <thead>
+            <tr>
+              <th className="text-xl font-bold">Images</th>
+              <th className="text-xl font-bold">Name</th>
+              <th className="text-xl font-bold">Social Handle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users?.map((user, index) => (
+              <tr key={index}>
+                <td>
+                  <div className="flex gap-2">
+                    {user?.images?.map((image, idx) => (
+                      <a
+                        key={idx}
+                        href={image} // Link to the full image
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={image}
+                          alt={`User ${user.name}`}
+                          className="h-12 w-12 object-cover rounded border hover:shadow-lg" // Thumbnail
+                        />
+                      </a>
+                    ))}
+                  </div>
+                </td>
+                <td>{user.name}</td>
+                <td>
+                  <a
+                    href={`https://www.socialmedia.com/${user.social}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    @{user.social}
+                  </a>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {/* row 1 */}
-              {users?.map((user, index) => (
-                <tr key={index}>
-                  <td>
-                    <div className="flex items-center gap-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle h-12 w-12">
-                          <img
-                            src={user?.image}
-                            alt="Avatar Tailwind CSS Component"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="font-bold">{user?.name}</div>
-                  </td>
-                  <td>{user?.social}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

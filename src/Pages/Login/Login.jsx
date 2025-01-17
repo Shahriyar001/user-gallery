@@ -76,6 +76,12 @@ const Login = () => {
               Sign Up
             </Link>
           </p>
+          <div>
+            <p>
+              admin email: <span className="font-bold">admin@gmail.com</span> &
+              pass: <span className="font-bold">123456</span>{" "}
+            </p>
+          </div>
         </form>
       </div>
     </div>

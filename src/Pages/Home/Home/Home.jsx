@@ -7,55 +7,58 @@ const Home = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
-    const imageFile = form.image.files[0]; // Get the selected file
 
-    if (!imageFile) {
-      toast.error("Please upload an image.");
+    const images = form.image.files; // Get all selected files
+    if (!images.length) {
+      toast.error("Please upload at least one image.");
       return;
     }
 
-    // Upload the image to ImgBB
-    const formData = new FormData();
-    formData.append("image", imageFile);
-
     try {
-      const imgRes = await fetch(image_hosting_api, {
-        method: "POST",
-        body: formData,
-      });
+      // Upload all images to ImgBB
+      const uploadedImages = [];
+      for (const image of images) {
+        const formData = new FormData();
+        formData.append("image", image);
 
-      const imgData = await imgRes.json();
+        const imgRes = await fetch(image_hosting_api, {
+          method: "POST",
+          body: formData,
+        });
 
-      if (imgData.success) {
-        const imageUrl = imgData.data.url;
-        console.log(imageUrl);
+        const imgData = await imgRes.json();
+        if (imgData.success) {
+          uploadedImages.push(imgData.data.url); // Collect uploaded image URLs
+        } else {
+          throw new Error("Failed to upload an image.");
+        }
+      }
 
-        // Prepare data for your database
-        const data = {
-          name: form.name.value,
-          social: form.social.value,
-          image: imageUrl, // Store the image URL
-        };
+      // Prepare data for the backend
+      const data = {
+        name: form.name.value,
+        social: form.social.value,
+        images: uploadedImages, // Store all image URLs in an array
+      };
 
-        // Send data to your backend
-        const userRes = await fetch("http://localhost:5000/users", {
+      // Send data to your backend
+      const userRes = await fetch(
+        "https://gallery-server-nu.vercel.app/users",
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
-        });
-
-        const userData = await userRes.json();
-
-        if (userRes.ok) {
-          toast.success("Added user successfully!");
-          form.reset(); // Clear the form
-        } else {
-          toast.error(userData.message || "Failed to add user.");
         }
+      );
+
+      const userData = await userRes.json();
+      if (userRes.ok) {
+        toast.success("User added successfully!");
+        form.reset(); // Clear the form
       } else {
-        toast.error("Image upload failed. Please try again.");
+        toast.error(userData.message || "Failed to add user.");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -105,6 +108,7 @@ const Home = () => {
               type="file"
               name="image"
               className="file-input w-full"
+              multiple // Allow multiple file uploads
               required
             />
           </label>
