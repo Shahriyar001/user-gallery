@@ -1,6 +1,12 @@
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../Context/AuthProvider";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
+  const { createUser } = useContext(AuthContext);
+  const [signUpError, setSignUpError] = useState("");
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = {
@@ -9,11 +15,21 @@ const SignUp = () => {
       password: event.target.password.value,
     };
     console.log(data);
+    createUser(data.email, data.password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        toast("User Created Successfully.");
+      })
+      .catch((error) => {
+        setSignUpError(error.message);
+        console.log(error);
+      });
   };
   return (
     <div>
       <div className="lg:w-4/5 w-[95%] border rounded-lg  bg-slate-200 mx-auto mt-20 py-20 px-10">
-        <h2 className="text-4xl font-bold mb-5">Admin Login</h2>
+        <h2 className="text-4xl font-bold mb-5">Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <label className="form-control w-full my-4">
             <div className="label">
@@ -23,6 +39,7 @@ const SignUp = () => {
             </div>
             <input
               type="text"
+              required
               name="name"
               placeholder="Type here"
               className="input input-bordered w-full "
@@ -34,6 +51,7 @@ const SignUp = () => {
             </div>
             <input
               type="email"
+              required
               name="email"
               placeholder="Type here"
               className="input input-bordered w-full "
@@ -47,6 +65,7 @@ const SignUp = () => {
             </div>
             <input
               type="password"
+              required
               name="password"
               placeholder="Type here"
               className="input input-bordered w-full "
@@ -59,9 +78,10 @@ const SignUp = () => {
           >
             Submit
           </button>
+          {signUpError && <p className="text-red-600">{signUpError}</p>}
           <p>
             Already have an account
-            <Link to="/signup" className="text-warning mx-1">
+            <Link to="/login" className="text-red-700 mx-1">
               login
             </Link>
           </p>

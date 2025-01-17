@@ -4,10 +4,21 @@ const Home = () => {
     const data = {
       name: event.target.name.value,
       social: event.target.social.value,
-      file: event.target.file.value,
+      // file: event.target.file.files[0],
     };
 
     console.log(data);
+    fetch("http://localhost:5000/users", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("data", data);
+      });
   };
 
   return (

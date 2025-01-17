@@ -1,6 +1,11 @@
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../Context/AuthProvider";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const { signIn } = useContext(AuthContext);
+  const [loginError, setLoginError] = useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = {
@@ -8,6 +13,16 @@ const Login = () => {
       password: event.target.password.value,
     };
     console.log(data);
+    signIn(data.email, data.password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        toast("login successfully");
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setLoginError(error.message);
+      });
   };
 
   return (
@@ -21,6 +36,7 @@ const Login = () => {
             </div>
             <input
               type="email"
+              required
               name="email"
               placeholder="Type here"
               className="input input-bordered w-full "
@@ -34,6 +50,7 @@ const Login = () => {
             </div>
             <input
               type="password"
+              required
               name="password"
               placeholder="Type here"
               className="input input-bordered w-full "
@@ -46,6 +63,11 @@ const Login = () => {
           >
             Submit
           </button>
+          <div>
+            {loginError && (
+              <p className="text-red-600">Incorrect email or password</p>
+            )}
+          </div>
           <p>
             Don't have any account?
             <Link to="/signup" className="text-red-700 mx-1">
